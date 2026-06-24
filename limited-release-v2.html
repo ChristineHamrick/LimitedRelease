@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Limited Release - SNAPP Mobile</title>
+<style>
+:root{--navy:#003366;--bg:#f0f2f5;--card:#ffffff;--blue:#0066cc;--green:#2e8b57;--orange:#d4820a;--red:#cc3300;--text:#1a2a3a;--dim:#666;--sep:#c8d4e0;--sep-light:#e8edf2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;max-width:430px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* Status bar */
+.status-bar{background:#000;color:#fff;padding:7px 24px 5px;display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+
+/* Training banner */
+.train-banner{background:#fff3e0;border-bottom:1px solid #e0c080;padding:5px 12px;text-align:center;font-size:10px;font-weight:600;color:#8b5e00}
+
+/* Nav bar */
+.nav-bar{background:var(--navy);padding:14px 16px;display:flex;align-items:center;position:sticky;top:0;z-index:50}
+.nav-bar .back{color:#fff;font-size:20px;background:none;border:none;cursor:pointer;padding:0 8px 0 0;font-weight:300}
+.nav-bar .title{flex:1;text-align:center;font-size:17px;font-weight:600;color:#fff;margin-right:28px}
+
+/* Customer header card */
+.cust-header{background:var(--card);border:1px solid var(--sep-light);margin:0;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.cust-header .medallion{width:32px;height:32px;border-radius:50%;background:#8e8e93;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.cust-header .info .name{font-size:17px;font-weight:700;color:var(--text)}
+.cust-header .info .sub{font-size:13px;color:var(--blue);font-weight:500}
+
+/* Bag context bar */
+.bag-context{background:var(--navy);padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+.bag-context .left{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase}
+.bag-context .right{display:flex;gap:8px}
+.bag-context .ctx-btn{background:#6b7b8d;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:11px;font-weight:600;text-transform:uppercase;cursor:pointer}
+
+/* Form content */
+.form-content{background:var(--card);padding:0}
+
+/* Form field row - matches screenshot style */
+.field-row{padding:14px 16px;border-bottom:1px solid var(--sep);display:flex;align-items:center;justify-content:space-between}
+.field-row .field-left{flex:1}
+.field-row .field-label{font-size:11px;color:var(--dim);font-weight:400;margin-bottom:2px}
+.field-row .field-value{font-size:16px;color:var(--text);font-weight:400}
+.field-row .field-icon{margin-right:10px;font-size:18px;color:var(--dim)}
+.field-row .chevron{color:var(--dim);font-size:14px}
+.field-row.has-icon{display:flex;align-items:center}
+.field-row.has-icon .field-icon{flex-shrink:0}
+
+/* Section divider */
+.section-div{background:var(--bg);padding:10px 16px;border-bottom:1px solid var(--sep-light);border-top:1px solid var(--sep-light)}
+.section-div .section-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px}
+
+/* DRA icon grid */
+.loc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px}
+.loc-tile{background:var(--card);border:1.5px solid var(--sep);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 4px;cursor:pointer;transition:all .15s}
+.loc-tile:active{transform:scale(.95)}
+.loc-tile.sel{border-color:var(--navy);background:rgba(0,51,102,.05)}
+.loc-tile .loc-ic{font-size:20px;margin-bottom:4px}
+.loc-tile .loc-lb{font-size:10px;color:var(--text);text-align:center;line-height:1.2}
+.loc-tile.sel .loc-lb{color:var(--navy);font-weight:600}
+
+/* Photo area */
+.photo-area{display:flex;gap:8px;padding:12px 16px}
+.photo-slot{flex:1;aspect-ratio:4/3;background:var(--bg);border:1.5px dashed var(--sep);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.photo-slot:active{opacity:.7}
+.photo-slot .ic{font-size:22px;margin-bottom:4px;color:var(--dim)}
+.photo-slot .tx{font-size:11px;color:var(--dim)}
+.photo-slot.done{background:rgba(46,139,87,.05);border:1.5px solid var(--green)}
+.photo-slot.done .ic{color:var(--green)}
+.photo-slot .chk{position:absolute;top:4px;right:4px;background:var(--green);color:#fff;width:16px;height:16px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center}
+
+/* Signature area */
+.sig-section{padding:12px 16px}
+.sig-disclaimer{background:rgba(212,130,10,.06);border:1px solid #e0c080;border-radius:8px;padding:10px 12px;font-size:12px;color:#6b4e00;margin-bottom:12px;line-height:1.5}
+.sig-canvas{border:1px solid var(--sep);border-radius:8px;background:#fff;width:100%;height:110px;cursor:crosshair;touch-action:none}
+.sig-actions{display:flex;gap:8px;margin-top:8px}
+.sig-actions button{flex:1;padding:10px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;text-transform:uppercase}
+.sig-actions .btn-clear{background:var(--card);border:1.5px solid var(--sep);color:var(--dim)}
+.sig-actions .btn-accept{background:var(--navy);border:none;color:#fff}
+
+/* Footer buttons - matches screenshot */
+.form-footer{position:sticky;bottom:0;background:var(--navy);padding:12px 16px;display:flex;gap:10px;z-index:40}
+.form-footer button{flex:1;padding:14px;border:none;border-radius:4px;font-size:15px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px}
+.form-footer .btn-reset{background:#6b7b8d;color:#fff}
+.form-footer .btn-submit{background:#6b7b8d;color:#fff}
+.form-footer .btn-submit.ready{background:#4a9eff;color:#fff}
+
+/* Confirmation */
+.confirm-card{background:var(--card);margin:16px;border-radius:8px;border:1px solid var(--sep-light);padding:20px;text-align:center;display:none}
+.confirm-card .check{font-size:40px;margin-bottom:8px}
+.confirm-card .title{font-size:17px;font-weight:700;color:var(--navy)}
+.confirm-card .sub{font-size:12px;color:var(--dim);margin-top:4px}
+.confirm-card .details{margin-top:14px;text-align:left;font-size:13px}
+.confirm-card .details div{padding:4px 0;border-bottom:1px solid var(--sep-light)}
+.confirm-card .details div:last-child{border-bottom:none}
+
+/* Camera overlay */
+.cam-ov{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:200;display:none;flex-direction:column}
+.cam-ov.on{display:flex}
+.cam-vf{flex:1;display:flex;align-items:center;justify-content:center}
+.cam-vf .frame{width:75%;aspect-ratio:4/3;border:2px solid rgba(255,255,255,.4);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.3);font-size:36px}
+.cam-ctrl{padding:24px;display:flex;align-items:center;justify-content:space-around}
+.cam-cancel{background:none;border:none;color:#fff;font-size:16px;cursor:pointer}
+.shutter{width:64px;height:64px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.3);cursor:pointer}
+.shutter:active{transform:scale(.9)}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .2s;z-index:300}
+.toast.show{opacity:1}
+
+/* Dropdown select styled */
+.field-select{-webkit-appearance:none;appearance:none;border:none;background:transparent;font-size:16px;color:var(--text);font-family:inherit;width:100%;padding:0;cursor:pointer}
+.field-select:focus{outline:none}
+</style>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="status-bar"><span>9:41</span><span>SYN &#x1F4F6; &#x1F50B;</span></div>
+
+<!-- Training Banner -->
+<div class="train-banner">TRAINING PROTOTYPE — Synthetic data only. Not actual SNAPP.</div>
+
+<!-- Nav Bar -->
+<div class="nav-bar">
+<button class="back" onclick="history.back()">&#x276E;</button>
+<div class="title">Limited Release</div>
+</div>
+
+<!-- Customer Header (like the real bags screen) -->
+<div class="cust-header">
+<div class="medallion">FO</div>
+<div class="info">
+<div class="name">WILLIAMS, SAMUEL</div>
+<div class="sub">TSA Pre✓</div>
+</div>
+</div>
+
+<!-- Bag Context Bar -->
+<div class="bag-context">
+<div class="left">BAG 1 — Limited Release</div>
+<div class="right">
+<button class="ctx-btn" onclick="history.back()">CANCEL</button>
+</div>
+</div>
+
+<!-- Form Content -->
+<div class="form-content" id="formArea">
+
+<!-- Bag Tag Field -->
+<div class="field-row">
+<div class="field-left">
+<div class="field-label">Bag Tag</div>
+<div class="field-value">SYN-BAG-7742</div>
+</div>
+</div>
+
+<!-- Bag Condition (pre-selected since we came from that dropdown) -->
+<div class="field-row">
+<div class="field-left">
+<div class="field-label">Bag Condition</div>
+<div class="field-value" style="color:var(--orange)">Pre-existing Damage</div>
+</div>
+</div>
+
+<!-- Damage Type Dropdown -->
+<div class="field-row">
+<div class="field-icon">🧳</div>
+<div class="field-left">
+<div class="field-label">Damage Indicator (DRA)</div>
+<select class="field-select" id="dmgType" onchange="checkReady()">
+<option value="">Select...</option>
+<option value="D">Damaged (General)</option>
+<option value="F">Fragile / Unsuitably Packed</option>
+<option value="P">Packaging Inadequate</option>
+<option value="R">Perishable</option>
+<option value="T">Torn / Ripped</option>
+<option value="C">Crushed / Dented</option>
+<option value="W">Wheels / Casters Broken</option>
+<option value="H">Handle Broken</option>
+<option value="Z">Zipper Broken</option>
+</select>
+</div>
+<span class="chevron">&#x276F;</span>
+</div>
+
+<!-- Extent -->
+<div class="field-row">
+<div class="field-left">
+<div class="field-label">Extent</div>
+<select class="field-select" id="dmgExt">
+<option value="">Select...</option>
+<option>Minor (cosmetic only)</option>
+<option>Moderate (functional impact)</option>
+<option>Severe (bag unusable)</option>
+</select>
+</div>
+<span class="chevron">&#x276F;</span>
+</div>
+
+<!-- Location Section -->
+<div class="section-div"><div class="section-title">Where on the bag?</div></div>
+<div class="loc-grid">
+<div class="loc-tile" onclick="selLoc(this,'Handle')"><div class="loc-ic">🧳</div><div class="loc-lb">Handle</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Wheels')"><div class="loc-ic">⚙️</div><div class="loc-lb">Wheels</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Zipper')"><div class="loc-ic">🔗</div><div class="loc-lb">Zipper</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Corner/Frame')"><div class="loc-ic">📐</div><div class="loc-lb">Corner/<br>Frame</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Panel')"><div class="loc-ic">🛅</div><div class="loc-lb">Front/Back<br>Panel</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Top')"><div class="loc-ic">⬆️</div><div class="loc-lb">Top</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Bottom')"><div class="loc-ic">⬇️</div><div class="loc-lb">Bottom</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Strap')"><div class="loc-ic">🪢</div><div class="loc-lb">Strap/<br>Buckle</div></div>
+<div class="loc-tile" onclick="selLoc(this,'Other')"><div class="loc-ic">❓</div><div class="loc-lb">Other</div></div>
+</div>
+<input type="hidden" id="dmgLoc" value="">
+
+<!-- Photo Section -->
+<div class="section-div"><div class="section-title">Photo of Damage</div></div>
+<div class="photo-area">
+<div class="photo-slot" id="ph0" onclick="openCam(0)"><div class="ic">&#x1F4F7;</div><div class="tx">Required</div></div>
+<div class="photo-slot" id="ph1" onclick="openCam(1)"><div class="ic">&#x1F4F7;</div><div class="tx">Optional</div></div>
+</div>
+
+<!-- Signature Section -->
+<div class="section-div"><div class="section-title">Passenger Acknowledgment</div></div>
+<div class="sig-section">
+<div class="sig-disclaimer">By signing below, I acknowledge that my bag has pre-existing damage as documented above. Delta Air Lines is not liable for this damage.</div>
+<div style="margin-bottom:8px">
+<div class="field-label" style="font-size:11px;color:var(--dim);margin-bottom:4px">Passenger Name</div>
+<div style="font-size:16px;font-weight:500">WILLIAMS, SAMUEL</div>
+</div>
+<canvas class="sig-canvas" id="sigCanvas"></canvas>
+<div class="sig-actions">
+<button class="btn-clear" onclick="clearSig()">CLEAR</button>
+<button class="btn-accept" onclick="acceptSig()">ACCEPT</button>
+</div>
+<div id="sigStatus" style="margin-top:6px;font-size:12px;color:var(--dim);text-align:center">Awaiting signature...</div>
+</div>
+
+</div><!-- end form-content -->
+
+<!-- Confirmation Card (hidden until submit) -->
+<div class="confirm-card" id="confirmCard">
+<div class="check">&#x2705;</div>
+<div class="title">Limited Release Submitted</div>
+<div class="sub">BPM Event: DAMHUCUx sent to backend</div>
+<div class="details">
+<div><strong>Bag Tag:</strong> <span id="confTag"></span></div>
+<div><strong>Damage:</strong> <span id="confDmg"></span></div>
+<div><strong>Location:</strong> <span id="confLoc"></span></div>
+<div><strong>Photos:</strong> <span id="confPh"></span></div>
+<div><strong>Signed by:</strong> <span id="confSig"></span></div>
+<div><strong>Time:</strong> <span id="confTime"></span></div>
+</div>
+</div>
+
+<!-- Footer Buttons (like the real RESET / APPLY) -->
+<div class="form-footer" id="formFooter">
+<button class="btn-reset" onclick="resetForm()">RESET</button>
+<button class="btn-submit" id="btnSubmit" onclick="submitLR()">SUBMIT</button>
+</div>
+
+<!-- Camera Overlay -->
+<div class="cam-ov" id="camOv">
+<div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+<button class="cam-cancel" onclick="closeCam()">Cancel</button>
+<span style="color:#fff;font-size:15px;font-weight:500">Damage Photo</span>
+<span style="color:#fff;font-size:14px">&#x26A1;</span>
+</div>
+<div class="cam-vf"><div class="frame">&#x1F4F7;</div></div>
+<div class="cam-ctrl"><div style="width:48px"></div><div class="shutter" onclick="capture()"></div><div style="width:48px"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var photos=[false,false],curSlot=0,sigDone=false,canvas,ctx,drawing=false,hasSig=false,selLocation="";
+
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.className="toast show";setTimeout(function(){t.className="toast"},2200)}
+
+function selLoc(el,val){
+  document.querySelectorAll(".loc-tile").forEach(function(t){t.classList.remove("sel")});
+  el.classList.add("sel");
+  selLocation=val;
+  document.getElementById("dmgLoc").value=val;
+  checkReady();
+}
+
+function openCam(i){curSlot=i;document.getElementById("camOv").className="cam-ov on"}
+function closeCam(){document.getElementById("camOv").className="cam-ov"}
+function capture(){
+  photos[curSlot]=true;closeCam();
+  var el=document.getElementById("ph"+curSlot);
+  el.className="photo-slot done";
+  el.innerHTML='<div class="ic" style="color:var(--green)">&#x1F5BC;</div><div class="chk">&#x2713;</div>';
+  toast("Photo captured");checkReady();
+}
+
+function checkReady(){
+  var dt=document.getElementById("dmgType").value;
+  var loc=document.getElementById("dmgLoc").value;
+  var ph=photos[0];
+  var sig=sigDone;
+  var btn=document.getElementById("btnSubmit");
+  if(dt&&loc&&ph&&sig){btn.className="btn-submit ready"}
+  else{btn.className="btn-submit"}
+}
+
+// Signature
+function initSig(){
+  canvas=document.getElementById("sigCanvas");
+  ctx=canvas.getContext("2d");
+  canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--navy').trim()||"#003366";
+  ctx.lineWidth=2.5;ctx.lineCap="round";
+  canvas.addEventListener("touchstart",function(e){e.preventDefault();drawing=true;var t=e.touches[0];var r=canvas.getBoundingClientRect();ctx.beginPath();ctx.moveTo(t.clientX-r.left,t.clientY-r.top)},{passive:false});
+  canvas.addEventListener("touchmove",function(e){if(!drawing)return;e.preventDefault();hasSig=true;var t=e.touches[0];var r=canvas.getBoundingClientRect();ctx.lineTo(t.clientX-r.left,t.clientY-r.top);ctx.stroke()},{passive:false});
+  canvas.addEventListener("touchend",function(){drawing=false});
+  canvas.addEventListener("mousedown",function(e){drawing=true;var r=canvas.getBoundingClientRect();ctx.beginPath();ctx.moveTo(e.clientX-r.left,e.clientY-r.top)});
+  canvas.addEventListener("mousemove",function(e){if(!drawing)return;hasSig=true;var r=canvas.getBoundingClientRect();ctx.lineTo(e.clientX-r.left,e.clientY-r.top);ctx.stroke()});
+  canvas.addEventListener("mouseup",function(){drawing=false});
+}
+
+function clearSig(){if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;sigDone=false;document.getElementById("sigStatus").textContent="Awaiting signature...";checkReady()}
+
+function acceptSig(){
+  if(!hasSig){toast("Please sign first");return}
+  sigDone=true;
+  document.getElementById("sigStatus").innerHTML='<span style="color:var(--green)">&#x2713; Signature accepted</span>';
+  toast("Signature captured");checkReady();
+}
+
+function resetForm(){
+  document.getElementById("dmgType").value="";
+  document.getElementById("dmgExt").value="";
+  document.getElementById("dmgLoc").value="";
+  selLocation="";
+  document.querySelectorAll(".loc-tile").forEach(function(t){t.classList.remove("sel")});
+  photos=[false,false];
+  document.getElementById("ph0").className="photo-slot";
+  document.getElementById("ph0").innerHTML='<div class="ic">&#x1F4F7;</div><div class="tx">Required</div>';
+  document.getElementById("ph1").className="photo-slot";
+  document.getElementById("ph1").innerHTML='<div class="ic">&#x1F4F7;</div><div class="tx">Optional</div>';
+  clearSig();
+  toast("Form reset");
+}
+
+function submitLR(){
+  var btn=document.getElementById("btnSubmit");
+  if(!btn.classList.contains("ready")){toast("Complete all required fields");return}
+  document.getElementById("confTag").textContent="SYN-BAG-7742";
+  document.getElementById("confDmg").textContent=document.getElementById("dmgType").options[document.getElementById("dmgType").selectedIndex].text;
+  document.getElementById("confLoc").textContent=selLocation||"Not specified";
+  document.getElementById("confPh").textContent=photos.filter(Boolean).length+" photo(s)";
+  document.getElementById("confSig").textContent="WILLIAMS, SAMUEL";
+  document.getElementById("confTime").textContent=new Date().toLocaleString("en-US");
+  document.getElementById("formArea").style.display="none";
+  document.getElementById("formFooter").style.display="none";
+  document.getElementById("confirmCard").style.display="block";
+  toast("Limited Release submitted");
+}
+
+setTimeout(initSig,100);
+</script>
+</body>
+</html>
